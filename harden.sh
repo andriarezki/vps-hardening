@@ -45,7 +45,9 @@ preflight() {
   command -v apt-get >/dev/null || die "only Debian/Ubuntu (apt) is supported"
   [ -n "$NEW_USER" ] || die "set NEW_USER"
   [[ "$NEW_USER" =~ ^[a-z_][a-z0-9_-]*$ ]] || die "invalid user name: $NEW_USER"
-  [[ "$SSH_PORT" =~ ^[0-9]+$ ]] && [ "$SSH_PORT" -ge 1 ] && [ "$SSH_PORT" -le 65535 ] || die "invalid SSH_PORT"
+  if ! [[ "$SSH_PORT" =~ ^[0-9]+$ ]] || [ "$SSH_PORT" -lt 1 ] || [ "$SSH_PORT" -gt 65535 ]; then
+    die "invalid SSH_PORT"
+  fi
   if [ -n "$SSH_PUBKEY" ]; then
     [[ "$SSH_PUBKEY" =~ ^(ssh-(ed25519|rsa)|ecdsa-sha2-nistp(256|384|521))\  ]] || die "SSH_PUBKEY does not look like a public key"
   fi
